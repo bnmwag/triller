@@ -1,4 +1,5 @@
 {
+  "extends": "@vercel/style-guide/typescript/node18",
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
