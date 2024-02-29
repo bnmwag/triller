@@ -30,7 +30,14 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <div className="grid min-h-screen grid-cols-[1fr,1024px,1fr] grid-rows-[64px,1fr] bg-background">
+            <div className="border-b"></div>
+            <div className="border-x border-b"></div>
+            <div className="border-b"></div>
+            <aside></aside>
+            <main className="border-x">{children}</main>
+            <aside></aside>
+          </div>
         </ThemeProvider>
       </body>
     </html>
