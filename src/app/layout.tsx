@@ -1,8 +1,12 @@
+import * as React from "react";
 import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { ThemeProvider } from "@/providers";
 import { cn } from "@/lib/utils";
+import { auth } from "@/lib/auth";
+import { FC, PropsWithChildren } from "react";
+import { Profile } from "@/components/profile";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,11 +20,29 @@ export const viewport: Viewport = {
   ],
 };
 
+interface SideBarProps extends PropsWithChildren {
+  className?: string;
+}
+
+const SideBar: FC<SideBarProps> = ({ children, className }) => {
+  return (
+    <aside>
+      <div className={cn("max-w-md px-6 pb-6 pt-12", className)}>
+        {children}
+      </div>
+    </aside>
+  );
+};
+
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
+export default async function RootLayout({
+  children,
+}: Readonly<RootLayoutProps>) {
+  const session = await auth();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -34,9 +56,11 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
             <div className="border-b"></div>
             <div className="border-x border-b"></div>
             <div className="border-b"></div>
-            <aside></aside>
+            <SideBar className="ml-auto">
+              {session ? <Profile user={session.user} /> : null}
+            </SideBar>
             <main className="border-x">{children}</main>
-            <aside></aside>
+            <SideBar>amk</SideBar>
           </div>
         </ThemeProvider>
       </body>
