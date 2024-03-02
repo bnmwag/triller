@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Thriller - A Twitter Clone
+
+This project is a simple and basic clone of Twitter, designed to help me learn NextJS, TailwindCSS, and Drizzle ORM. It's a simple project that allows users to create, read, update, and delete tweets. It also has user authentication using GitHub OAuth. I also gave the whole UI a new look using my skills in design and TailwindCSS.
+
+## Features
+
+- Create, Read, Update, and Delete Tweets
+- User Authentication using GitHub OAuth
+- Responsive design using TailwindCSS
+- Deployed on Vercel for high availability
+
+## Built With
+
+[![NextJS](https://img.shields.io/badge/next.js-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Drizzle](https://img.shields.io/badge/drizzle-black?style=for-the-badge&logo=drizzle)](https://drizzle.dev/)
+[![next-auth](https://img.shields.io/badge/nextauth-black?style=for-the-badge)](https://next-auth.js.org/)
+[![ShadcnUI](https://img.shields.io/badge/shadcnui-black?style=for-the-badge&logo=shadcnui)](https://shadcnui.com/)
+[![Tailwindcss](https://img.shields.io/badge/tailwindcss-black?style=for-the-badge&logo=tailwindcss)](https://www.tailwindcss.com/)
+[![Vercel](https://img.shields.io/badge/vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
 
 ## Getting Started
 
-First, run the development server:
+To get a local copy up and running follow these simple steps.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Configuration
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Add a new OAuth App on GitHub.
+2. Create a neon postgreSQL database.
+3. You'll need to create a `.env.local` file in the root of the project and add the following environment variables:
+   ```env
+   AUTH_GITHUB_ID="your_id_here"
+   AUTH_GITHUB_SECRET="your_secret"
+   AUTH_SECRET="your_secret_here"
+   DATABASE_URL="postgresql://postgres:password@localhost:5432/triller"
+   ```
+4. create a `.env` file and just add the DATABASE_URL variable again. Drizzle ORM uses this file to connect to the database during migrations.
+   ```env
+    DATABASE_URL="postgresql://postgres:password@localhost:5432/triller"
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Installation and Running
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+1. Clone the repo
 
-## Learn More
+   ```sh
+   git clone https://github.com/bnmwag/triller.git
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Install NPM packages
+   ```sh
+   pnpm install
+   ```
+3. Start the development server
+   ```sh
+   pnpm dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Final Thoughts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This project taught me a lot and got me excited to tackle more challenges. I learned a lot about workflows, project structure, and the importance of good documentation.
