@@ -21,7 +21,7 @@ export const PostFeed: FC<IPostFeedProps> = ({ posts }) => {
   };
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["projects"],
+    queryKey: ["posts"],
     queryFn: fetchPosts,
     initialPageParam: 0,
     initialData: { pages: [posts], pageParams: [0] }, // Add the pageParams property

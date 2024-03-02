@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { ProfileAvatar } from "./profile";
 import { Textarea } from "./ui/textarea";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface IPostInputProps {
   user: User;
@@ -18,6 +19,7 @@ interface IPostInputProps {
 
 export const PostInput: FC<IPostInputProps> = ({ user }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const queryClient = useQueryClient();
   const form = useForm({
     resolver: zodResolver(postsValidator.POST.req),
     defaultValues: { content: "" },
@@ -55,6 +57,7 @@ export const PostInput: FC<IPostInputProps> = ({ user }) => {
 
       toast.success("Your message has been posted.");
 
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
       if (textareaRef.current) textareaRef.current.style.height = "inherit";
       form.reset();
     } catch (error) {
