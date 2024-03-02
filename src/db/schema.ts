@@ -15,14 +15,20 @@ export const users = pgTable("user", {
   image: text("image"),
 });
 
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+
 export const posts = pgTable("post", {
   id: text("id").notNull().primaryKey(),
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });
+
+export type Post = typeof posts.$inferSelect;
+export type NewPost = typeof posts.$inferInsert;
 
 export const comments = pgTable("comment", {
   id: text("id").notNull().primaryKey(),
@@ -35,6 +41,9 @@ export const comments = pgTable("comment", {
   content: text("content").notNull(),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
 });
+
+export type Comment = typeof comments.$inferSelect;
+export type NewComment = typeof comments.$inferInsert;
 
 export const accounts = pgTable(
   "account",
@@ -60,6 +69,9 @@ export const accounts = pgTable(
   }),
 );
 
+export type Account = typeof accounts.$inferSelect;
+export type NewAccount = typeof accounts.$inferInsert;
+
 export const sessions = pgTable("session", {
   sessionToken: text("sessionToken").notNull().primaryKey(),
   userId: text("userId")
@@ -67,6 +79,9 @@ export const sessions = pgTable("session", {
     .references(() => users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
+
+export type Session = typeof sessions.$inferSelect;
+export type NewSession = typeof sessions.$inferInsert;
 
 export const verificationTokens = pgTable(
   "verificationToken",
@@ -79,3 +94,6 @@ export const verificationTokens = pgTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
 );
+
+export type VerificationToken = typeof verificationTokens.$inferSelect;
+export type NewVerificationToken = typeof verificationTokens.$inferInsert;

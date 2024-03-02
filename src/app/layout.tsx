@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import { FC, PropsWithChildren } from "react";
 import { Profile } from "@/components/profile";
+import { Toaster } from "sonner";
+import { QueryProvider } from "@/providers/query-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -51,18 +53,22 @@ export default async function RootLayout({
           GeistSans.className,
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="grid min-h-screen grid-cols-[1fr,1024px,1fr] grid-rows-[64px,1fr] bg-background">
-            <div className="border-b"></div>
-            <div className="border-x border-b"></div>
-            <div className="border-b"></div>
-            <SideBar className="ml-auto">
-              {session ? <Profile user={session.user} /> : null}
-            </SideBar>
-            <main className="border-x">{children}</main>
-            <SideBar>amk</SideBar>
-          </div>
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className="grid min-h-screen grid-cols-[1fr,1024px,1fr] grid-rows-[64px,1fr] bg-background">
+              <div className="border-b"></div>
+              <div className="border-x border-b"></div>
+              <div className="border-b"></div>
+              <SideBar className="ml-auto">
+                {session ? <Profile user={session.user} /> : null}
+              </SideBar>
+              <main className="border-x">{children}</main>
+              <SideBar>amk</SideBar>
+            </div>
+
+            <Toaster />
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
