@@ -63,7 +63,7 @@ export default async function RootLayout({
                 {session ? <Profile user={session.user} /> : null}
               </SideBar>
               <main className="border-x">{children}</main>
-              <SideBar>amk</SideBar>
+              <SideBar></SideBar>
             </div>
 
             <Toaster />
