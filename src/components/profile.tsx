@@ -2,6 +2,7 @@ import { Session } from "next-auth";
 import type { FC } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
 
 interface IProfileProps {
   user: Session["user"];
@@ -36,7 +37,7 @@ export const ProfileAvatar: FC<IProfileAvatarProps> = ({
   className,
 }) => {
   return (
-    <Avatar className={cn(className)}>
+    <Avatar className={cn("", className)}>
       {image ? (
         <AvatarImage src={image} alt={name || "profile image"} />
       ) : (
@@ -49,6 +50,7 @@ export const ProfileAvatar: FC<IProfileAvatarProps> = ({
             "U"}
         </AvatarFallback>
       )}
+      <Skeleton className="h-full w-full" />
     </Avatar>
   );
 };

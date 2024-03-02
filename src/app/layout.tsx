@@ -9,6 +9,7 @@ import { FC, PropsWithChildren } from "react";
 import { Profile } from "@/components/profile";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/providers/query-provider";
+import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -29,7 +30,9 @@ interface SideBarProps extends PropsWithChildren {
 const SideBar: FC<SideBarProps> = ({ children, className }) => {
   return (
     <aside>
-      <div className={cn("max-w-md px-6 pb-6 pt-12", className)}>
+      <div
+        className={cn("hidden max-w-md px-6 pb-6 pt-12 xl:block", className)}
+      >
         {children}
       </div>
     </aside>
@@ -49,23 +52,24 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-background antialiased",
           GeistSans.className,
         )}
       >
         <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="grid min-h-screen grid-cols-[1fr,1024px,1fr] grid-rows-[64px,1fr] bg-background">
+            <div className="max-w-2x grid min-h-screen grid-cols-[0,1fr,0] grid-rows-[64px,1fr] bg-background md:grid-cols-[1fr,672px,1fr]">
               <div className="border-b"></div>
-              <div className="border-x border-b"></div>
+              <div className="border-b md:border-x">
+                <Navbar />
+              </div>
               <div className="border-b"></div>
               <SideBar className="ml-auto">
                 {session ? <Profile user={session.user} /> : null}
               </SideBar>
-              <main className="border-x">{children}</main>
-              <SideBar></SideBar>
+              <main className="md:border-x">{children}</main>
+              <SideBar>FUTURE: trending topics</SideBar>
             </div>
-
             <Toaster />
           </ThemeProvider>
         </QueryProvider>

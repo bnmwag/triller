@@ -29,7 +29,7 @@ const IndexPage: NextPage = async () => {
         <PostInput user={session.user as any} />
       ) : (
         <div className="flex items-center justify-between border-b p-4">
-          <p className="text-center text-muted">
+          <p className="text-balance text-muted">
             You must be logged in to post.
           </p>
           <Link
