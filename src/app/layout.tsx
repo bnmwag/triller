@@ -10,6 +10,7 @@ import { Profile } from "@/components/profile";
 import { Toaster } from "sonner";
 import { QueryProvider } from "@/providers/query-provider";
 import { Navbar } from "@/components/navbar";
+import { SessionProvider } from "@/providers/session-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -57,21 +58,23 @@ export default async function RootLayout({
         )}
       >
         <QueryProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="max-w-2x grid min-h-screen grid-cols-[0,1fr,0] grid-rows-[64px,1fr] bg-background md:grid-cols-[1fr,672px,1fr]">
-              <div className="border-b"></div>
-              <div className="border-b md:border-x">
-                <Navbar />
+          <SessionProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <div className="max-w-2x grid min-h-screen grid-cols-[0,1fr,0] grid-rows-[64px,1fr] bg-background md:grid-cols-[1fr,672px,1fr]">
+                <div className="border-b"></div>
+                <div className="border-b md:border-x">
+                  <Navbar />
+                </div>
+                <div className="border-b"></div>
+                <SideBar className="ml-auto">
+                  {session ? <Profile user={session.user} /> : null}
+                </SideBar>
+                <main className="md:border-x">{children}</main>
+                <SideBar>FUTURE: trending topics</SideBar>
               </div>
-              <div className="border-b"></div>
-              <SideBar className="ml-auto">
-                {session ? <Profile user={session.user} /> : null}
-              </SideBar>
-              <main className="md:border-x">{children}</main>
-              <SideBar>FUTURE: trending topics</SideBar>
-            </div>
-            <Toaster />
-          </ThemeProvider>
+              <Toaster />
+            </ThemeProvider>
+          </SessionProvider>
         </QueryProvider>
       </body>
     </html>

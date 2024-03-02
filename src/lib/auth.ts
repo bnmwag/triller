@@ -6,4 +6,7 @@ import GitHub from "next-auth/providers/GitHub";
 export const { handlers, auth } = NextAuth({
   adapter: DrizzleAdapter(db),
   providers: [GitHub],
+  pages: {
+    signIn: "/sign-in",
+  },
 });

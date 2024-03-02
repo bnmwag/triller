@@ -34,7 +34,7 @@ const IndexPage: NextPage = async () => {
           </p>
           <Link
             className={cn(buttonVariants({ variant: "outline" }), "px-8")}
-            href="/api/auth/signin"
+            href="/sign-in"
           >
             Sign In
           </Link>
