@@ -1,7 +1,7 @@
 "use client";
 
 import { postsValidator } from "@/app/api/posts/validator";
-import { User } from "@/types";
+import { User } from "@/db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Send } from "lucide-react";

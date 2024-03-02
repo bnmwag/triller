@@ -25,7 +25,7 @@ export const Profile: FC<IProfileProps> = ({ user }) => {
 };
 
 interface IProfileAvatarProps {
-  name: string;
+  name: string | null;
   image: string | null | undefined;
   className?: string;
 }
@@ -38,13 +38,15 @@ export const ProfileAvatar: FC<IProfileAvatarProps> = ({
   return (
     <Avatar className={cn(className)}>
       {image ? (
-        <AvatarImage src={image} alt={name} />
+        <AvatarImage src={image} alt={name || "profile image"} />
       ) : (
         <AvatarFallback>
-          {name
-            .split(" ")
-            .map((name) => name[0])
-            .join("")}
+          {(name &&
+            name
+              .split(" ")
+              .map((name) => name[0])
+              .join("")) ||
+            "U"}
         </AvatarFallback>
       )}
     </Avatar>
