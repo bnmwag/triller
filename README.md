@@ -1,4 +1,4 @@
-# Thriller - A Twitter Clone
+# Triller - A Twitter Clone
 
 This project is a simple and basic clone of Twitter, designed to help me learn NextJS, TailwindCSS, and Drizzle ORM. It's a simple project that allows users to create, read, update, and delete tweets. It also has user authentication using GitHub OAuth. I also gave the whole UI a new look using my skills in design and TailwindCSS.
 
