@@ -9,19 +9,29 @@ import { Post } from "./post";
 
 interface IPostFeedProps {
   posts: PostUserFullJoin[];
+  endpoint?: string;
+  isCommentFeed?: boolean;
 }
 
-export const PostFeed: FC<IPostFeedProps> = ({ posts }) => {
+export const PostFeed: FC<IPostFeedProps> = ({
+  posts,
+  endpoint,
+  isCommentFeed,
+}) => {
   const { ref, inView } = useInView();
 
   const fetchPosts = async ({ pageParam = 0 }): Promise<PostUserFullJoin[]> => {
-    const res = await axios.get("/api/posts?cursor=" + pageParam);
+    const res = await axios.get(
+      !endpoint
+        ? "/api/posts?cursor=" + pageParam
+        : endpoint + "?cursor=" + pageParam,
+    );
 
     return res.data;
   };
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["posts"],
+    queryKey: [!isCommentFeed ? "posts" : "comments"],
     queryFn: fetchPosts,
     initialPageParam: 0,
     initialData: { pages: [posts], pageParams: [0] }, // Add the pageParams property

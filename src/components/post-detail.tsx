@@ -9,14 +9,21 @@ import {
   Repeat,
   Send,
 } from "lucide-react";
-import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  FC,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { ProfileAvatar } from "./profile";
 import { Button } from "./ui/button";
 import { notFound, useRouter } from "next/navigation";
 
 dayjs.extend(relativeTime);
 
-interface IPostProps {
+interface IPostDetailProps {
   post:
     | {
         id: string | null;
@@ -31,9 +38,7 @@ interface IPostProps {
     | undefined;
 }
 
-export type Ref = HTMLDivElement;
-
-export const Post = forwardRef<Ref, IPostProps>(({ post }, ref) => {
+export const PostDetail: FC<IPostDetailProps> = ({ post }) => {
   const router = useRouter();
   const [time, setTime] = useState<string>("----");
 
@@ -74,39 +79,41 @@ export const Post = forwardRef<Ref, IPostProps>(({ post }, ref) => {
   if (!post || !post.user) return notFound();
 
   return (
-    <div ref={ref} className="grid grid-cols-[50px,1fr] gap-x-2 border-b p-4">
-      <div className="flex flex-col items-center gap-y-4">
-        <ProfileAvatar image={post.user.image} name={post.user.name} />
-        <div className="w-px flex-1 bg-muted" />
-        <div className="p-2"></div>
-      </div>
-      <div className="space-y-1">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm">{post.user.name}</h2>
-          <div className="flex items-center gap-x-4">
-            <span className="text-sm text-muted">{time}</span>
-            <MoreHorizontal className="size-4" />
+    <>
+      <div className="grid grid-cols-[50px,1fr] gap-x-2 border-b p-4">
+        <div className="flex flex-col items-center gap-y-4">
+          <ProfileAvatar image={post.user.image} name={post.user.name} />
+          <div className="w-px flex-1 bg-muted" />
+          <div className="p-2"></div>
+        </div>
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm">{post.user.name}</h2>
+            <div className="flex items-center gap-x-4">
+              <span className="text-sm text-muted">{time}</span>
+              <MoreHorizontal className="size-4" />
+            </div>
           </div>
-        </div>
-        <p className="w-full text-pretty">{post.content}</p>
-        <div className="flex">
-          {actions.map(({ icon, onClick }, index) => {
-            const Icon = icon;
-
-            return (
-              <Button
-                size={"icon"}
-                variant={"ghost"}
-                className="size-8"
-                key={`${post.id}-actions-${index}`}
-                onClick={onClick}
-              >
-                <Icon className="size-4" />
-              </Button>
-            );
-          })}
+          <p className="w-full text-pretty">{post.content}</p>
         </div>
       </div>
-    </div>
+      <div className="flex justify-between border-b p-4">
+        {actions.map(({ icon, onClick }, index) => {
+          const Icon = icon;
+
+          return (
+            <Button
+              size={"icon"}
+              variant={"ghost"}
+              className="size-8"
+              key={`${post.id}-actions-${index}`}
+              onClick={onClick}
+            >
+              <Icon className="size-4" />
+            </Button>
+          );
+        })}
+      </div>
+    </>
   );
-});
+};

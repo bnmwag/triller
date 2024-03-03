@@ -1,23 +1,24 @@
 "use client";
 
 import { postsValidator } from "@/app/api/posts/validator";
-import { User } from "@/db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Send } from "lucide-react";
+import { Session } from "next-auth";
 import { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ProfileAvatar } from "./profile";
 import { Textarea } from "./ui/textarea";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface IPostInputProps {
-  user: User;
+  user: Session["user"];
+  postId?: string;
 }
 
-export const PostInput: FC<IPostInputProps> = ({ user }) => {
+export const PostInput: FC<IPostInputProps> = ({ user, postId }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const form = useForm({
@@ -25,6 +26,7 @@ export const PostInput: FC<IPostInputProps> = ({ user }) => {
     defaultValues: { content: "" },
   });
 
+  const isComment = !!postId;
   const content = form.watch("content");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -53,15 +55,25 @@ export const PostInput: FC<IPostInputProps> = ({ user }) => {
     try {
       setIsLoading(true);
 
-      await axios.post("/api/posts", values);
+      if (isComment) {
+        await axios.post(`/api/posts/${postId}/comments`, values);
+      } else {
+        await axios.post("/api/posts", values);
+      }
 
-      toast.success("Your message has been posted.");
+      toast.success(
+        `Your ${!isComment ? "message" : "comment"} has been posted.`,
+      );
 
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({
+        queryKey: [!isComment ? "posts" : "comments"],
+      });
       if (textareaRef.current) textareaRef.current.style.height = "inherit";
       form.reset();
     } catch (error) {
-      toast.error("An error occurred while posting your message.");
+      toast.error(
+        `An error occurred while posting your ${!isComment ? "message" : "comment"}.`,
+      );
     } finally {
       setIsLoading(false);
     }
@@ -69,15 +81,19 @@ export const PostInput: FC<IPostInputProps> = ({ user }) => {
 
   return (
     <div className="grid grid-cols-[50px,1fr] border-b p-4">
-      <div>
+      {!user?.name ? null : (
         <ProfileAvatar name={user.name} image={user.image} />
-      </div>
+      )}
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <fieldset disabled={isLoading}>
           <Textarea
             autoFocus
             className="min-h-0 resize-none rounded-none border-none px-0 text-base font-medium placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
-            placeholder="Share your thoughts with the world..."
+            placeholder={
+              !isComment
+                ? "Share your thoughts with the world..."
+                : "Reply to this post..."
+            }
             rows={1}
             {...form.register("content")}
             ref={(e) => {
