@@ -39,9 +39,13 @@ export const ProfileAvatar: FC<IProfileAvatarProps> = ({
   return (
     <Avatar className={cn("", className)}>
       {image ? (
-        <AvatarImage src={image} alt={name || "profile image"} />
+        <AvatarImage
+          className="relative z-10"
+          src={image}
+          alt={name || "profile image"}
+        />
       ) : (
-        <AvatarFallback>
+        <AvatarFallback className="relative z-10">
           {(name &&
             name
               .split(" ")
@@ -50,7 +54,7 @@ export const ProfileAvatar: FC<IProfileAvatarProps> = ({
             "U"}
         </AvatarFallback>
       )}
-      <Skeleton className="h-full w-full" />
+      <Skeleton className="absolute inset-0" />
     </Avatar>
   );
 };
