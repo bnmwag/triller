@@ -39,7 +39,7 @@ export const comments = pgTable("comment", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });
 
 export type Comment = typeof comments.$inferSelect;

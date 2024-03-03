@@ -3,28 +3,21 @@ import { auth } from "@/lib/auth";
 import { TPostsValidator, postsValidator } from "./validator";
 import { db, desc, eq } from "@/db";
 import { posts, users } from "@/db/schema";
+import { postsQueries } from "@/db/queries/posts.queries";
 
-export async function GET(req: Request, res: Response) {
+export async function GET(req: Request) {
   const url = new URL(req.url);
   const cursor = url.searchParams.get("cursor");
 
-  const result = await db
-    .select({
-      id: posts.id,
-      content: posts.content,
-      createdAt: posts.createdAt,
-      user: { id: users.id, name: users.name, image: users.image },
-    })
-    .from(posts)
-    .fullJoin(users, eq(posts.userId, users.id))
-    .orderBy(desc(posts.createdAt))
-    .offset(cursor ? parseInt(cursor, 10) : 0)
-    .limit(10);
+  const result = await postsQueries.getAll({
+    limit: 10,
+    offset: cursor ? parseInt(cursor, 10) : 0,
+  });
 
   return new Response(JSON.stringify(result));
 }
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
   const session = await auth();
   const body = await req.json();
 
