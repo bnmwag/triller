@@ -1,7 +1,5 @@
-import { db, eq, and } from "@/db";
-import { likes } from "@/db/schema";
+import { likeQueries } from "@/db/queries/likes.queries";
 import { auth } from "@/lib/auth";
-import { v4 } from "uuid";
 import { TPostsIdLikesValidator } from "./validator";
 
 export async function GET(
@@ -12,29 +10,21 @@ export async function GET(
   const session = await auth();
 
   if (!session?.user?.id) {
-    return new Response("Unauthorized", { status: 401 });
+    return Response.json({
+      status: 401,
+      message: "Unauthorized",
+    } as TPostsIdLikesValidator["GET"]["res"]);
   }
 
-  const likesCount = await db
-    .select({ id: likes.id })
-    .from(likes)
-    .where(eq(likes.postId, postId));
+  const count = await likeQueries.getCountByPostId(postId);
 
-  const hasLiked = await db
-    .select({ id: likes.id })
-    .from(likes)
-    .where(and(eq(likes.postId, postId), eq(likes.userId, session.user.id)));
+  const hasLiked = await likeQueries.hasUserLiked(postId, session.user.id);
 
-  const response: TPostsIdLikesValidator["GET"]["res"] = {
+  return Response.json({
     status: 200,
     message: "OK",
-    data: {
-      count: likesCount.length,
-      hasLiked: hasLiked.length > 0,
-    },
-  };
-
-  return new Response(JSON.stringify(response), { status: 200 });
+    data: { count, hasLiked },
+  } as TPostsIdLikesValidator["GET"]["res"]);
 }
 
 export async function POST(
@@ -45,41 +35,31 @@ export async function POST(
   const session = await auth();
 
   if (!session?.user?.id) {
-    return new Response("Unauthorized", { status: 401 });
+    return Response.json({
+      status: 401,
+      message: "Unauthorized",
+    } as TPostsIdLikesValidator["POST"]["res"]);
   }
 
   try {
-    const hasLiked = await db
-      .select({ id: likes.id })
-      .from(likes)
-      .where(and(eq(likes.postId, postId), eq(likes.userId, session.user.id)));
+    const hasLiked = await likeQueries.hasUserLiked(postId, session.user.id);
 
-    if (hasLiked.length) {
-      await db
-        .delete(likes)
-        .where(
-          and(eq(likes.postId, postId), eq(likes.userId, session.user.id)),
-        );
+    if (hasLiked) {
+      await likeQueries.delete(postId, session.user.id);
     } else {
-      await db
-        .insert(likes)
-        .values({ id: v4(), postId: postId, userId: session.user.id });
+      await likeQueries.create(postId, session.user.id);
     }
   } catch (error) {
     console.log(error);
 
-    const response: TPostsIdLikesValidator["POST"]["res"] = {
+    return Response.json({
       status: 422,
       message: "Unprocessable Entity",
-    };
-
-    return new Response(JSON.stringify(response), { status: 422 });
+    } as TPostsIdLikesValidator["POST"]["res"]);
   }
 
-  const response: TPostsIdLikesValidator["POST"]["res"] = {
+  return Response.json({
     status: 200,
     message: "OK",
-  };
-
-  return new Response(JSON.stringify(response), { status: 200 });
+  } as TPostsIdLikesValidator["POST"]["res"]);
 }

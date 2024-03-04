@@ -1,5 +1,9 @@
 import { db, desc, eq } from "..";
-import { comments, users } from "../schema";
+import { User, comments, users, type Comment } from "../schema";
+
+export interface IComment_Users_FullJoin extends Comment {
+  user: Pick<User, "id" | "name" | "image">;
+}
 
 interface ICommentsQueries {
   getByPostId: ({
@@ -10,7 +14,7 @@ interface ICommentsQueries {
     postId: string;
     limit: number;
     offset?: number;
-  }) => Promise<any>;
+  }) => Promise<IComment_Users_FullJoin[]>;
 }
 
 export const commentsQueries: ICommentsQueries = {
@@ -29,6 +33,6 @@ export const commentsQueries: ICommentsQueries = {
       .offset(offset)
       .limit(limit);
 
-    return res;
+    return res as IComment_Users_FullJoin[];
   },
 };

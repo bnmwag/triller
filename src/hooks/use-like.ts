@@ -11,10 +11,18 @@ export const useLike = ({ postId }: IUseLikeArgs) => {
   const { data: post } = usePost(postId);
   const user = useSessionUser();
 
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
   const [data, setData] = useState({
     hasLiked: false,
     count: 0,
   });
+
+  useEffect(() => {
+    setIsLiked(data.hasLiked);
+    setLikeCount(data.count);
+  }, [data]);
 
   useEffect(() => {
     if (!post || !user) return;
@@ -24,11 +32,24 @@ export const useLike = ({ postId }: IUseLikeArgs) => {
     });
   }, [post, user]);
 
-  const toggleLike = async () => {
+  const toggleLike = () => {
     if (!post || !user) return;
 
-    await axios.post(`/api/posts/${post.id}/likes`);
+    const originalIsLiked = isLiked;
+    const originalLikeCount = likeCount;
+
+    // Optimistic update
+    setIsLiked(!isLiked);
+    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+
+    try {
+      axios.post(`/api/posts/${post.id}/likes`);
+    } catch (error) {
+      // Revert optimistic update if API call fails
+      setIsLiked(originalIsLiked);
+      setLikeCount(originalLikeCount);
+    }
   };
 
-  return { data, toggleLike };
+  return { data, toggleLike, isLiked, likeCount };
 };

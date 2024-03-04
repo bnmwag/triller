@@ -41,15 +41,7 @@ export const Post = forwardRef<Ref, IPostProps>(({ post }, ref) => {
   const router = useRouter();
   const [time, setTime] = useState<string>("----");
 
-  const { data, toggleLike } = useLike({ postId: post?.id });
-
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-
-  useEffect(() => {
-    setIsLiked(data.hasLiked);
-    setLikeCount(data.count);
-  }, [data]);
+  const { isLiked, likeCount, toggleLike } = useLike({ postId: post?.id });
 
   useEffect(() => {
     if (!post) return;
@@ -63,25 +55,6 @@ export const Post = forwardRef<Ref, IPostProps>(({ post }, ref) => {
     post?.createdAt,
     useCallback(() => dayjs(post?.createdAt).fromNow(), [post?.createdAt]),
   ]);
-
-  const handleLike = async () => {
-    const originalIsLiked = isLiked;
-    const originalLikeCount = likeCount;
-
-    // Optimistic update
-    setIsLiked(!isLiked);
-    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
-
-    try {
-      await toggleLike();
-      // The API can return the new total number of likes and status,
-      // which you can use to update the state accurately.
-    } catch (error) {
-      // Revert optimistic update if API call fails
-      setIsLiked(originalIsLiked);
-      setLikeCount(originalLikeCount);
-    }
-  };
 
   const actions = [
     {
@@ -121,7 +94,7 @@ export const Post = forwardRef<Ref, IPostProps>(({ post }, ref) => {
             size={"icon"}
             variant={"ghost"}
             className="size-8"
-            onClick={handleLike}
+            onClick={toggleLike}
           >
             <Heart
               className={cn(

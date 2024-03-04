@@ -17,7 +17,10 @@ export async function GET(
   const postId = params.id;
 
   if (!postId) {
-    return new Response("Not Found", { status: 404 });
+    return Response.json({
+      status: 404,
+      message: "Not Found",
+    });
   }
 
   const result = await commentsQueries.getByPostId({
@@ -26,7 +29,7 @@ export async function GET(
     offset: cursor ? parseInt(cursor, 10) : 0,
   });
 
-  return new Response(JSON.stringify(result));
+  return Response.json(result);
 }
 
 export async function POST(

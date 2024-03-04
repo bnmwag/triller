@@ -1,7 +1,8 @@
 import { db } from "..";
+import { User } from "../schema";
 
 interface IUserQueries {
-  getById: (id: string) => Promise<any>;
+  getById: (id: string) => Promise<User>;
 }
 
 export const userQueries: IUserQueries = {
@@ -10,6 +11,6 @@ export const userQueries: IUserQueries = {
       where: (users, { eq }) => eq(users.id, id),
     });
 
-    return res;
+    return res as User;
   },
 };

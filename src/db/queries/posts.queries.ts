@@ -1,5 +1,9 @@
 import { db, desc, eq } from "..";
-import { posts, users } from "../schema";
+import { User, posts, users, type Post } from "../schema";
+
+interface IPost_Users_FullJoin extends Post {
+  user: Pick<User, "id" | "name" | "image">;
+}
 
 interface IPostsQueries {
   getAll: ({
@@ -8,8 +12,9 @@ interface IPostsQueries {
   }: {
     limit: number;
     offset?: number;
-  }) => Promise<any>;
-  getById: (id: string) => Promise<any>;
+  }) => Promise<IPost_Users_FullJoin[]>;
+  getById: (id: string) => Promise<IPost_Users_FullJoin>;
+  deleteById: (id: string) => Promise<{ deletedId: string } | undefined>;
 }
 
 export const postsQueries: IPostsQueries = {
@@ -27,7 +32,7 @@ export const postsQueries: IPostsQueries = {
       .offset(offset)
       .limit(limit);
 
-    return res;
+    return res as IPost_Users_FullJoin[];
   },
   getById: async (id: string) => {
     const res = await db
@@ -40,6 +45,14 @@ export const postsQueries: IPostsQueries = {
       .from(posts)
       .where(eq(posts.id, id))
       .fullJoin(users, eq(posts.userId, users.id));
+
+    return res[0] as IPost_Users_FullJoin;
+  },
+  deleteById: async (id: string) => {
+    const res = await db
+      .delete(posts)
+      .where(eq(posts.id, id))
+      .returning({ deletedId: posts.id });
 
     return res[0];
   },
