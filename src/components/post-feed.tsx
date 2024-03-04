@@ -15,17 +15,13 @@ interface IPostFeedProps {
 
 export const PostFeed: FC<IPostFeedProps> = ({
   posts,
-  endpoint,
+  endpoint = "/api/posts",
   isCommentFeed,
 }) => {
   const { ref, inView } = useInView();
 
   const fetchPosts = async ({ pageParam = 0 }): Promise<PostUserFullJoin[]> => {
-    const res = await axios.get(
-      !endpoint
-        ? "/api/posts?cursor=" + pageParam
-        : endpoint + "?cursor=" + pageParam,
-    );
+    const res = await axios.get(endpoint + "?cursor=" + pageParam);
 
     return res.data;
   };
@@ -52,7 +48,7 @@ export const PostFeed: FC<IPostFeedProps> = ({
     <div>
       {data &&
         data.pages?.map((page) =>
-          page.map((post: any, index: number) => {
+          page.map((post: any) => {
             if (!post.content) return null;
             return <Post key={post.id} post={post} />;
           }),

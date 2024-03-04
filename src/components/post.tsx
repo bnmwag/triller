@@ -13,6 +13,9 @@ import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 import { ProfileAvatar } from "./profile";
 import { Button } from "./ui/button";
 import { notFound, useRouter } from "next/navigation";
+import axios from "axios";
+import { cn } from "@/lib/utils";
+import { useLike } from "@/hooks/use-like";
 
 dayjs.extend(relativeTime);
 
@@ -22,6 +25,7 @@ interface IPostProps {
         id: string | null;
         content: string | null;
         createdAt: Date | null;
+        isLiked: boolean;
         user: {
           image: string | null;
           name: string | null;
@@ -37,6 +41,16 @@ export const Post = forwardRef<Ref, IPostProps>(({ post }, ref) => {
   const router = useRouter();
   const [time, setTime] = useState<string>("----");
 
+  const { data, toggleLike } = useLike({ postId: post?.id });
+
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
+  useEffect(() => {
+    setIsLiked(data.hasLiked);
+    setLikeCount(data.count);
+  }, [data]);
+
   useEffect(() => {
     if (!post) return;
 
@@ -50,16 +64,29 @@ export const Post = forwardRef<Ref, IPostProps>(({ post }, ref) => {
     useCallback(() => dayjs(post?.createdAt).fromNow(), [post?.createdAt]),
   ]);
 
+  const handleLike = async () => {
+    const originalIsLiked = isLiked;
+    const originalLikeCount = likeCount;
+
+    // Optimistic update
+    setIsLiked(!isLiked);
+    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+
+    try {
+      await toggleLike();
+      // The API can return the new total number of likes and status,
+      // which you can use to update the state accurately.
+    } catch (error) {
+      // Revert optimistic update if API call fails
+      setIsLiked(originalIsLiked);
+      setLikeCount(originalLikeCount);
+    }
+  };
+
   const actions = [
     {
-      icon: Heart,
-      onClick: () => {},
-    },
-    {
       icon: MessageCircle,
-      onClick: () => {
-        router.push(`/posts/${post?.id}`);
-      },
+      onClick: () => router.push(`/posts/${post?.id}`),
     },
     {
       icon: Repeat,
@@ -90,6 +117,22 @@ export const Post = forwardRef<Ref, IPostProps>(({ post }, ref) => {
         </div>
         <p className="w-full text-pretty">{post.content}</p>
         <div className="flex">
+          <Button
+            size={"icon"}
+            variant={"ghost"}
+            className="size-8"
+            onClick={handleLike}
+          >
+            <Heart
+              className={cn(
+                "size-4",
+                isLiked
+                  ? "fill-red-500 text-red-500"
+                  : "fill-transparent text-white",
+              )}
+            />
+            <span className="pl-1">{likeCount}</span>
+          </Button>
           {actions.map(({ icon, onClick }, index) => {
             const Icon = icon;
 
