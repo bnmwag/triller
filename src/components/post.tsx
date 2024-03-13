@@ -74,7 +74,7 @@ export const Post = forwardRef<Ref, IPostProps>(({ post }, ref) => {
   if (!post || !post.user) return notFound();
 
   return (
-    <div ref={ref} className="grid grid-cols-[50px,1fr] gap-x-2 border-b p-4">
+    <div ref={ref} className="grid grid-cols-[0fr,1fr] gap-x-2 border-b p-4">
       <div className="flex flex-col items-center gap-y-4">
         <ProfileAvatar image={post.user.image} name={post.user.name} />
         <div className="w-px flex-1 bg-muted" />

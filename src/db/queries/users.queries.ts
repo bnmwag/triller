@@ -6,7 +6,7 @@ interface IUserQueries {
 }
 
 export const userQueries: IUserQueries = {
-  getById: async (id: string) => {
+  getById: async (id) => {
     const res = await db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, id),
     });

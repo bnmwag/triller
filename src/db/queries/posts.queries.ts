@@ -15,6 +15,7 @@ interface IPostsQueries {
   }) => Promise<IPost_Users_FullJoin[]>;
   getById: (id: string) => Promise<IPost_Users_FullJoin>;
   deleteById: (id: string) => Promise<{ deletedId: string } | undefined>;
+  getAllByUserId: (userId: string) => Promise<IPost_Users_FullJoin[]>;
 }
 
 export const postsQueries: IPostsQueries = {
@@ -55,5 +56,20 @@ export const postsQueries: IPostsQueries = {
       .returning({ deletedId: posts.id });
 
     return res[0];
+  },
+  getAllByUserId: async (userId: string) => {
+    const res = await db
+      .select({
+        id: posts.id,
+        content: posts.content,
+        createdAt: posts.createdAt,
+        user: { id: users.id, name: users.name, image: users.image },
+      })
+      .from(posts)
+      .fullJoin(users, eq(posts.userId, users.id))
+      .where(eq(posts.userId, userId))
+      .orderBy(desc(posts.createdAt));
+
+    return res as IPost_Users_FullJoin[];
   },
 };
