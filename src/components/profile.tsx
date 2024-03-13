@@ -18,9 +18,6 @@ export const Profile: FC<IProfileProps> = ({ user }) => {
         <h1 className="text-2xl font-bold">{user.name}</h1>
         <p className="text-gray-500">{user.email}</p>
       </div>
-      <p className="text-balance">
-        {"Labore in in culpa reprehenderit laborum non amet id ullamco."}
-      </p>
     </div>
   );
 };

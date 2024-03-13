@@ -15,9 +15,7 @@ export const ProfileHeader: FC<IProfileHeaderProps> = ({ user }) => {
           <h1 className="text-sm">{user.name}</h1>
           <p className="text-xs text-muted-foreground">{user.email}</p>
         </div>
-        <p className="text-balance">
-          {"Labore in in culpa reprehenderit laborum non amet id ullamco."}
-        </p>
+        {user.bio ? <p className="text-balance">{user.bio}</p> : null}
       </div>
     </div>
   );
